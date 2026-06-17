@@ -19,6 +19,47 @@ As LLMs gain the ability to execute tools and access local/remote contexts via M
 
 ---
 
+## 🤖 For AI Agent Developers
+
+If you are building AI Agents (using LangChain, AutoGPT, or custom MCP clients), **Security Guard MCP** solves the "Trust Gap" between your agent and your infrastructure. 
+
+### Why use this?
+When you give an AI Agent a tool (e.g., "Read File" or "Execute SQL"), you are essentially giving it a "shell" into your environment. Security Guard MCP ensures:
+*   **Prompt Injection Defense**: Filters malicious intent before it reaches your sensitive tools.
+*   **Context Isolation**: Limits what the agent can "see" and "touch" based on strictly defined scopes.
+*   **Safe Experimentation**: Developers can test autonomous agents without worrying about them accidentally deleting data or leaking `.env` files.
+
+### 🔄 The Security Flow
+```mermaid
+graph LR
+    subgraph "Untrusted Zone"
+        A[AI Agent / LLM]
+    end
+
+    subgraph "Security Guard MCP (Safe Zone)"
+        B{Gateway}
+        C[Policy Engine]
+        D[Sanitizer]
+        E[Audit Log]
+    end
+
+    subgraph "Internal Infrastructure"
+        F[File System]
+        G[Database]
+        H[Internal APIs]
+    end
+
+    A -- "MCP Request" --> B
+    B -- "Check RBAC" --> C
+    C -- "Allowed" --> F & G & H
+    F & G & H -- "Raw Output" --> D
+    D -- "Masked Output" --> B
+    B -- "Secure Context" --> A
+    B -- "Async Event" --> E
+```
+
+---
+
 ## 🏗️ Architecture
 
 Built on a modular **NestJS Monorepo** architecture, the project is divided into specialized micro-services and libraries:
