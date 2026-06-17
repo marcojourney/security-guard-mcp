@@ -1,0 +1,1 @@
+# Architecture\n\nSecurity Guard MCP architecture documentation.

@@ -1,0 +1,1 @@
+console.log('Security Guard MCP Gateway');
