@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/gateway/src",
+  "monorepo": true,
+  "root": "apps/gateway",
+  "projects": {
+    "gateway": {
+      "type": "application",
+      "root": "apps/gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gateway/tsconfig.app.json"
+      }
+    },
+    "sanitizer": {
+      "type": "library",
+      "root": "libs/sanitizer",
+      "entryFile": "index",
+      "sourceRoot": "libs/sanitizer/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/sanitizer/tsconfig.lib.json"
+      }
+    },
+    "scanner": {
+      "type": "library",
+      "root": "libs/scanner",
+      "entryFile": "index",
+      "sourceRoot": "libs/scanner/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/scanner/tsconfig.lib.json"
+      }
+    }
+  }
+}

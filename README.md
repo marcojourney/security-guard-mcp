@@ -29,7 +29,26 @@ When you give an AI Agent a tool (e.g., "Read File" or "Execute SQL"), you are e
 *   **Context Isolation**: Limits what the agent can "see" and "touch" based on strictly defined scopes.
 *   **Safe Experimentation**: Developers can test autonomous agents without worrying about them accidentally deleting data or leaking `.env` files.
 
+### 🚀 Key Use Cases
+
+#### 1. Microservices Development
+When using AI agents to navigate complex microservice architectures:
+*   **Service Discovery Protection**: Prevents agents from probing internal endpoints they aren't authorized to access.
+*   **Credential Shielding**: Automatically masks internal service-to-service tokens and Kafka credentials in the agent's context.
+
+#### 2. Frontend & Web Development
+Protecting your UI/UX workflow:
+*   **Source Code Privacy**: Allows agents to help with CSS/UI logic while blocking access to sensitive API configurations or `.env` files.
+*   **Proprietary Logic Shield**: Sanitizes internal business logic or intellectual property from being sent back to the LLM provider's training sets.
+
+#### 3. Data Engineering & SQL Agents
+For agents with database tool access:
+*   **PII Scrubbing**: Dynamically masks Personal Identifiable Information (PII) from SQL query results before the agent processes them.
+*   **Query Guardrails**: Works with the Policy Engine to block destructive commands (DROP, TRUNCATE) even if the agent is "convinced" to run them via prompt injection.
+
 ### 🔄 The Security Flow
+
+#### 1. High-Level Architecture
 ```mermaid
 graph LR
     subgraph "Untrusted Zone"
@@ -57,6 +76,58 @@ graph LR
     B -- "Secure Context" --> A
     B -- "Async Event" --> E
 ```
+
+#### 2. Request Lifecycle (Deep Dive)
+```mermaid
+sequenceDiagram
+    participant Agent as AI Agent (Untrusted)
+    participant GW as MCP Gateway
+    participant PE as Policy Engine
+    participant Tool as Internal Tool/FS
+    participant SN as Sanitizer (DLP)
+    participant AL as Audit Logger
+
+    Agent->>GW: 1. Call Tool (e.g., read_file)
+    GW->>AL: Log Request Intent
+    GW->>PE: 2. Validate Permissions
+    alt Unauthorized / Sensitive Path
+        PE-->>GW: Access Denied
+        GW-->>Agent: 403 Forbidden Error
+    else Authorized
+        PE-->>GW: Permission Granted
+        GW->>Tool: 3. Execute with Restricted Scope
+        Tool-->>GW: 4. Return Raw Data/Secret
+        GW->>SN: 5. Inspect & Mask Data
+        SN-->>GW: Sanitized Payload
+        GW->>AL: Log Successful Execution
+        GW-->>Agent: 6. Return Secure Context
+    end
+```
+
+#### 3. Policy Decision Logic
+```mermaid
+flowchart TD
+    Start([Incoming Request]) --> Auth{Is Authenticated?}
+    Auth -- No --> Deny([Reject 401])
+    Auth -- Yes --> RBAC{Has Tool Role?}
+    
+    RBAC -- No --> Deny
+    RBAC -- Yes --> Type{Request Type}
+    
+    Type -- File Access --> FileCheck{Is Path Sensitive?}
+    Type -- Tool Call --> ParamCheck{Identify Risky Params}
+    
+    FileCheck -- Match (.env, .key) --> Deny
+    FileCheck -- Safe Path --> Execute
+    
+    ParamCheck -- Malicious Pattern --> Deny
+    ParamCheck -- Safe --> Execute
+    
+    Execute[Execute Tool] --> Mask[Auto-Mask Sensitive Output]
+    Mask --> Success([Return Secure Output])
+```
+
+---
 
 ---
 
