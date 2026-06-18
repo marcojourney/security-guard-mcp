@@ -138,7 +138,9 @@ graph TD
         A1 -- "3. Exfiltration" --> A3{{"🔥 DATA BREACH<br/>Credential Leak & PII Exposure"}}
         style A3 fill:#ff4d4d,color:#fff,stroke:#333,stroke-width:4px
     end
-
+```
+```mermaid
+graph TD
     subgraph "✅ SECURE: With Security Guard MCP"
         B1[AI Agent] -- "1. MCP Request" --> B2[Security Guard MCP]
         B2 -- "2. Policy & RBAC Check" --> B3[Internal Microservices]
@@ -148,9 +150,6 @@ graph TD
         style B4 fill:#00c853,color:#fff,stroke:#333,stroke-width:2px
     end
 ```
-
----
-
 ---
 
 ## 🏗️ Architecture
