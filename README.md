@@ -127,6 +127,28 @@ flowchart TD
     Mask --> Success([Return Secure Output])
 ```
 
+#### 4. The Risk: Direct Integration vs. Security Gateway
+This diagram illustrates the critical "Trust Gap" and the high risk of exposure when AI Agents are integrated without a security intermediary.
+
+```mermaid
+graph TD
+    subgraph "❌ HIGH RISK: Direct Integration"
+        A1[AI Agent] -- "1. Malicious Intent / Injection" --> A2[Internal Microservices]
+        A2 -- "2. Raw Secrets / .env / PII" --> A1
+        A1 -- "3. Exfiltration" --> A3{{"🔥 DATA BREACH<br/>Credential Leak & PII Exposure"}}
+        style A3 fill:#ff4d4d,color:#fff,stroke:#333,stroke-width:4px
+    end
+
+    subgraph "✅ SECURE: With Security Guard MCP"
+        B1[AI Agent] -- "1. MCP Request" --> B2[Security Guard MCP]
+        B2 -- "2. Policy & RBAC Check" --> B3[Internal Microservices]
+        B3 -- "3. Sensitive Data" --> B2
+        B2 -- "4. Auto-Masking & DLP" --> B1
+        B1 -- "5. Safe Context" --> B4{{"🛡️ ENTERPRISE COMPLIANCE<br/>Zero-Trust Architecture"}}
+        style B4 fill:#00c853,color:#fff,stroke:#333,stroke-width:2px
+    end
+```
+
 ---
 
 ---
